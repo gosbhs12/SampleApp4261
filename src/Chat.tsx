@@ -7,7 +7,7 @@ import Config from 'react-native-config';
 import Geocoder from "react-native-geocoding";
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
 const GOOGLE_MAPS_API_KEY = Config.GOOGLE_MAPS_API_KEY;
-Geocoder.init("AIzaSyBKcSnhIqFTbtfbGpbIncKBpognL9IiO2I");
+Geocoder.init("");
 type Message = {
     key: string;
     text: any;
