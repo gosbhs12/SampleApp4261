@@ -40,8 +40,9 @@ align-self: flex-start;
 const InputContainer = styled(View)`
 background-color: #e1e3e3;
 position: fixed;
-padding-bottom: 30px;
+margin-bottom: 10px;
 width: 100%;
+
 `;
 const InputBox = styled(View)`
     padding: 10px 20px;
@@ -93,6 +94,11 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
     const [imageSource, setImageSource] = useState<string>('');
     // const [isImage, setIsImage] = useState<boolean>(false);
     const cameraRef = useRef(null);
+    const flatListRef = useRef(null);
+
+    const handleScrollToEnd = () => {
+        flatListRef.current.scrollToEnd({ animated: true });
+    };
     const devices = useCameraDevices();
     console.log('devices', devices)
     const device: any = devices.back
@@ -111,6 +117,10 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
         setInputMessage(tempMessage);
         console.log('inputMessage', inputMessage)
         setTempMessage('');
+        setTimeout(() => {
+            handleScrollToEnd()
+        }, 100)
+
     };
     const sendMessage = () => {
         if (imageSource) {
@@ -210,6 +220,7 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
             ) :
                 <Container>
                     <FlatList
+                        ref={flatListRef}
                         data={messages}
                         renderItem={({ item }) => {
                             const isImage = item.text.startsWith('/') && item.text.endsWith('.jpeg');
