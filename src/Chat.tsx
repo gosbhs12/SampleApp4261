@@ -5,8 +5,8 @@ import { Button } from 'react-native-paper';
 import Geolocation from '@react-native-community/geolocation';
 import Geocoder from "react-native-geocoding";
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
-Geocoder.init("AIzaSyBKcSnhIqFTbtfbGpbIncKBpognL9IiO2I");
-const SERVER_URL = "https://sample4261-19363cdbfe12.herokuapp.com";
+Geocoder.init("");
+const SERVER_URL = "";
 type Message = {
     'key': string;
     'text': any;
