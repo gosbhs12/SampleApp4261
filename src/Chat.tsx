@@ -1,18 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, FlatList, TextInput, Platform, TouchableOpacity, Image, KeyboardAvoidingView, Modal, Button as RNButton, Linking, Alert } from 'react-native';
 import styled from 'styled-components';
-import { Button, IconButton, MD3Colors } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import Geolocation from '@react-native-community/geolocation';
-import Config from 'react-native-config';
 import Geocoder from "react-native-geocoding";
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
-const GOOGLE_MAPS_API_KEY = Config.GOOGLE_MAPS_API_KEY;
 Geocoder.init("");
+const SERVER_URL = "";
 type Message = {
-    key: string;
-    text: any;
-    sender: string;
-    receiver: string;
+    'key': string;
+    'text': any;
+    'sender': string;
+    'receiver': string;
 };
 interface Props {
     myId: string;
@@ -60,8 +59,6 @@ width: 70%;
 `;
 
 const fetchAddress = async (latitude: any, longitude: any) => {
-    console.log('lat', latitude)
-    console.log('longitude', longitude)
     var address: string = "";
     await Geocoder.from(latitude, longitude)
         .then(json => {
@@ -100,7 +97,7 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
         flatListRef.current.scrollToEnd({ animated: true });
     };
     const devices = useCameraDevices();
-    console.log('devices', devices)
+
     const device: any = devices.back
     useEffect(() => {
         async function getPermission() {
@@ -109,42 +106,53 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
             if (permission === 'denied') await Linking.openSettings();
         }
         getPermission();
-
     }, []);
 
     const handleOnSubmitEditing = () => {
-        console.log('tempMessage', tempMessage)
         setInputMessage(tempMessage);
-        console.log('inputMessage', inputMessage)
         setTempMessage('');
         setTimeout(() => {
             handleScrollToEnd()
         }, 100)
 
     };
-    const sendMessage = () => {
+    const sendMessageToServer = async (message: Message) => {
+        const response = await fetch(`${SERVER_URL}/send_message`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(message),
+        });
+        const responseData = await response.json();
+        return responseData;
+    };
+    const sendMessage = async () => {
         if (imageSource) {
             const newMessage: Message = {
-                key: messages[messages.length - 1].key + 1,
-                text: imageSource,
-                sender: myId,
-                receiver: receiverId
+                'key': new Date().toISOString(),
+                'text': imageSource,
+                'sender': myId,
+                'receiver': receiverId
             };
             setMessages([...messages, newMessage]);
             setImageSource('');
-
+            const serverResponse = await sendMessageToServer(newMessage);
+            console.log("Server response:", serverResponse);
         }
 
         if (inputMessage) {
             console.log('inputMessage', inputMessage)
             const newMessage: Message = {
-                key: messages[messages.length - 1].key + 1,
-                text: inputMessage,
-                sender: myId,
-                receiver: receiverId
+                'key': new Date().toISOString(),
+                'text': inputMessage,
+                'sender': myId,
+                'receiver': receiverId
             };
             setMessages([...messages, newMessage]);
             setInputMessage('');
+            const serverResponse = await sendMessageToServer(newMessage);
+            console.log("Server response:", serverResponse);
         }
 
 
@@ -158,9 +166,7 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
     };
 
     const capturePhoto = async () => {
-
         if (cameraRef.current) {
-
             const photo = await cameraRef.current.takePhoto({});
             if (photo) {
                 setImageSource(photo.path);
@@ -178,8 +184,6 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
             if (address) {
                 console.log("Current address:", address);
                 setInputMessage(address);
-
-
                 // TODO: 이 주소 정보를 서버나 다른 유저에게 전송
             } else {
                 console.error("Could not fetch the address.");
@@ -228,10 +232,10 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
                             return (<>
                                 {item.sender === myId ? <MyMessage>{
                                     !isImage ?
-                                        <Text>{item.text}</Text> : <Image source={{ url: item.text }} style={{ width: 150, height: 150 }} />
+                                        <Text>{item["text"]}</Text> : <Image source={{ url: item["text"] }} style={{ width: 150, height: 150 }} />
                                 }
                                 </MyMessage> : <><Text style={{ paddingBottom: 5, paddingLeft: 10 }}>{receiverId}
-                                </Text><OtherMessage><Text>{item.text}</Text></OtherMessage></>}
+                                </Text><OtherMessage><Text>{item["text"]}</Text></OtherMessage></>}
                             </>)
                         }}
                         keyExtractor={item => item.key}
