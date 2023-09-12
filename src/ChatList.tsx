@@ -2,45 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
 import styled from 'styled-components';
 import { TextInput, Button } from 'react-native-paper';
-const Container = styled(View)`
-padding: 0 22px;
-top: 30px;
-heigth: 100%;
-`;
-
-const ModalContainer = styled(View)`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  heigth: 60%;
-`;
-
-const ModalBox = styled(View)`
-  width: 80%;
-  padding: 20px;
-  background-color: #FFDFD3;
-  border: 1px;
-  border-radius: 10px;
-  elevation: 5;
-`;
-const IdList = styled(FlatList)`
-  padding: 10px 20px;
-`;
+import { Container, CardBox, ModalContainer, ModalBox, IdList } from './styles';
 
 const data: string[] = ["jisung", "gos123", "go313", "jisan", "uernw", "numb", "gosdsfs"];
-interface ProfileProps {
-    userId: string
-}
-const CardBox = styled(TouchableOpacity)`
-  padding: 15px 20px;
-  border: 1px;
-  border-radius: 15px;
-  border-color: green;
-  margin: 5px 0;
-  background-color: #C6DEF1;
-  display: flex;
-  flex-direction: row;
-`;
+
 type Message = {
     key: string;
     text: string;
