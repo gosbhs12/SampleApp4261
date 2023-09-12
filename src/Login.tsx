@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform,LogBox } from 'react-native';
 import styled from 'styled-components';
 import { Button, TextInput, Text } from 'react-native-paper';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
+
 import { SignupContainer, Input, BelowBox, TextBelowBtn, LContainer, TBtn } from './styles';
 
+  LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+]);
 interface Props {
     creating: boolean;
     setCreating: (creating: boolean) => void;
@@ -36,32 +40,20 @@ const SignupPage: React.FC<Props> = (props) => {
     //         PushNotificationIOS.removeEventListener(type);
     //     };
     // });
-    const onRemoteNotification = (notification: any) => {
-        const isClicked = notification.getData().userInteraction === 1;
 
-        if (isClicked) {
-            // Navigate user to another screen
-        } else {
-            // Do something else with push notification
-        }
-        // Use the appropriate result based on what you needed to do for this notification
-        const result = PushNotificationIOS.FetchResult.NoData;
-        notification.finish(result);
-    };
     useEffect(
         () => {
             setName("");
             setID("");
             setPwd("");
-            const details: any = {
-                fireDate: "",
-            };
+
             // PushNotificationIOS.scheduleLocalNotification(details);
             // requestUserPermission();
         }, []
     );
     return (
         <SignupContainer>
+
             <Input label="Name"
                 value={name} onChangeText={(text: string) => setName(text)} />
             <Input label="ID"
@@ -70,7 +62,6 @@ const SignupPage: React.FC<Props> = (props) => {
                 value={pwd} secureTextEntry={true} onChangeText={(text: string) => setPwd(text)} autoCapitalize="none" />
             {/* <Input label="Confirm Password"
                 value={confirmPwd} secureTextEntry={true} onChangeText={(text: string) => {setConfirmPwd(text)
-                
                 }} /> */}
             <Button mode="contained" onPress={() => console.log('Pressed')}>
                 Create
@@ -94,6 +85,7 @@ const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [creating, setCreating] = React.useState<boolean>(false);
     return (
         <LContainer>
+            <Text>Login with Id: gosbhs12, any password works</Text>
             {
                 creating ? <SignupPage creating={creating} setCreating={setCreating}></SignupPage> : <>
                     <Input label="ID"
