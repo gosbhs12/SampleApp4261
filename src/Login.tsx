@@ -1,39 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform,LogBox } from 'react-native';
 import styled from 'styled-components';
 import { Button, TextInput, Text } from 'react-native-paper';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import { LogBox } from 'react-native';
 
-LogBox.ignoreLogs([
+import { SignupContainer, Input, BelowBox, TextBelowBtn, LContainer, TBtn } from './styles';
+
+  LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
 ]);
-const SignupContainer = styled(View)`
-  top: -10%;
-`;
-const LContainer = styled(View)`
-  top: 30%;
-  padding: 0 22px;
-`;
-const Input = styled(TextInput)`
-  margin: 6px 0;
-  padding: 3px 0;
-`;
-const TBtn = styled(Button)`
-  margin: 0 20px;
-  top: 20px;
-`;
-const BelowBox = styled(View)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 20px;
-  top: 20px;
-  flex-direction: row;
-`;
-const TextBelowBtn = styled(Text)`
-    
-`;
 interface Props {
     creating: boolean;
     setCreating: (creating: boolean) => void;
