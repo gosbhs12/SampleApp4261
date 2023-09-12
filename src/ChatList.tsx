@@ -42,24 +42,13 @@ const CardBox = styled(TouchableOpacity)`
   flex-direction: row;
 `;
 type Message = {
-    key: string;
-    text: string;
-    sender: string;
-    receiver: string;
+    'key': string;
+    'text': any;
+    'sender': string;
+    'receiver': string;
 };
-const messageData: Message[] = [
-    { key: '1', text: "Hello, nice to meet you.", sender: 'gosbhs12', receiver: 'jisung' },
-    { key: '2', text: "Hello! How are you?", sender: 'jisung', receiver: 'gosbhs12' },
-    { key: '3', text: "Have you done the assignment?", sender: 'gosbhs12', receiver: 'jisung' },
-    { key: '4', text: "dasnfl;snd?", sender: 'gosbhs12', receiver: 'myung1' },
-    { key: '5', text: "cvxvx,m,", sender: 'myung1', receiver: 'gosbhs12' },
-    { key: '6', text: "Wdym?", sender: 'gosbhs12', receiver: 'myung1' },
-    { key: '7', text: "I was joking man", sender: 'myung1', receiver: 'gosbhs12' },
-    { key: '8', text: "I did.", sender: 'gosbhs12', receiver: 'jisung' },
-    { key: '9', text: "Could you give me answer?", sender: 'jisung', receiver: 'gosbhs12' },
-];
 
-
+const SERVER_URL = "https://sample4261-19363cdbfe12.herokuapp.com";
 
 const ChatList: React.FC<{ route: any, navigation: any }> = ({ route, navigation }) => {
     const myuserId: string = route.params.userId;
@@ -70,14 +59,25 @@ const ChatList: React.FC<{ route: any, navigation: any }> = ({ route, navigation
     const [chatRoomList, setChatRoomList] = useState([{ id: "jisung", name: "Jisung" }, { id: "myung1", name: "Myungsung" }]);
     const [searchedUserId, setSearchedUserId] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const fetchMessagesFromServer = async (userId: string): Promise<Message[] | null> => {
+        const response = await fetch(`${SERVER_URL}/get_messages?myId=${myuserId}&userId=${userId}`);
+
+        const messageData = await response.json();
+        return messageData;
+    };
+
     const fetchChatData = async (userId: string): Promise<Message[] | null> => {
         // 나와 고른사람의 아이디를 서버에 보내서 그 메시지 리스트만 받아 chatData로 아웃풋한다.
-        console.log('userId', userId)
-        // setTimeout(() => {
-        const chatData = messageData.filter((message) => (message.sender === userId && message.receiver === myuserId) || (message.sender === myuserId && message.receiver === userId));
-        // }, 200)
-        console.log('chatData111', chatData)
-        return chatData.length > 0 ? chatData : null;
+
+        const messageData = await fetchMessagesFromServer(userId);
+
+        // const chatData = messageData.filter((message: Message) => (message.sender === userId && message.receiver === myuserId) || (message.sender === myuserId && message.receiver === userId));
+        console.log('messageData', messageData)
+        const messages: Message[] | null = messageData["messages"];
+        // console.log('chatData111', chatData)
+
+        return messages
     };
 
     const createNewChatRoom = async (receiverId: string): Promise<void> => {
@@ -89,15 +89,10 @@ const ChatList: React.FC<{ route: any, navigation: any }> = ({ route, navigation
 
     const handleChatBoxPress = async (receiverId: string) => {
         let chatData = await fetchChatData(receiverId);
-        console.log('await');
-        console.log('chatData', chatData);
-
         const chatRoomExists = chatRoomList.some(room => room.id === receiverId);
-
         if (!chatData && !chatRoomExists) { // 데이터가 없고, 채팅방도 없는 경우만 채팅방 생성
             await createNewChatRoom(receiverId);
         }
-
         setModalVisible(false);
         navigation.navigate('Chat', { myId: myuserId, receiverId: receiverId, data: chatData });
     };
@@ -129,7 +124,7 @@ const ChatList: React.FC<{ route: any, navigation: any }> = ({ route, navigation
                 data={chatRoomList}
                 renderItem={({ item }) => (<>
                     {item ?
-                        <CardBox onPress={async () => await handleChatBoxPress(item.id)}>
+                        <CardBox id={item.id} onPress={async () => await handleChatBoxPress(item.id)}>
                             <Text>{item.id}</Text>
                         </CardBox> : <Text>No Chat List</Text>}
                 </>

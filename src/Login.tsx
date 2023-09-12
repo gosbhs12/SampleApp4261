@@ -3,6 +3,11 @@ import { View, Platform } from 'react-native';
 import styled from 'styled-components';
 import { Button, TextInput, Text } from 'react-native-paper';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+]);
 const SignupContainer = styled(View)`
   top: -10%;
 `;
@@ -77,9 +82,7 @@ const SignupPage: React.FC<Props> = (props) => {
             setName("");
             setID("");
             setPwd("");
-            const details: any = {
-                fireDate: "",
-            };
+
             // PushNotificationIOS.scheduleLocalNotification(details);
             // requestUserPermission();
         }, []
