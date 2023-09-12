@@ -97,7 +97,6 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
         flatListRef.current.scrollToEnd({ animated: true });
     };
     const devices = useCameraDevices();
-
     const device: any = devices.back
     useEffect(() => {
         async function getPermission() {
